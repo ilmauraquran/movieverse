@@ -7,6 +7,7 @@
 <style>
 :root{--bg:#080d1a;--panel:#111a2e;--gold:#e8bd64;--text:#f5f5f7;--muted:#aab3c5}
 *{box-sizing:border-box}
+html{scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
 header{position:sticky;top:0;z-index:10;background:#080d1af2;border-bottom:1px solid #ffffff12;padding:16px 5%;display:flex;align-items:center;gap:24px;justify-content:space-between;flex-wrap:wrap}
 .logo{font-size:25px;font-weight:900;color:var(--gold);letter-spacing:-1px}
@@ -14,7 +15,8 @@ header{position:sticky;top:0;z-index:10;background:#080d1af2;border-bottom:1px s
 nav{display:flex;gap:18px;flex-wrap:wrap}
 nav a{color:#d8deea;text-decoration:none;font-size:14px}
 nav a:hover{color:var(--gold)}
-.search{background:#141e32;border:1px solid #2b3852;border-radius:25px;padding:11px 15px;color:white;width:220px;max-width:100%}
+.search{background:#141e32;border:1px solid #2b3852;border-radius:25px;padding:12px 16px;color:white;width:240px;max-width:100%;outline:none}
+.search:focus{border-color:var(--gold)}
 .hero{margin:24px 5% 35px;min-height:360px;border-radius:20px;overflow:hidden;display:flex;align-items:center;background:linear-gradient(90deg,#080d1a 0%,#080d1acc 48%,#080d1a22 100%),url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1600&q=85') center/cover}
 .hero-content{padding:40px;max-width:600px}
 .eyebrow{color:var(--gold);font-weight:bold;letter-spacing:3px;font-size:12px}
@@ -31,11 +33,11 @@ h2{font-size:23px;margin:0}
 .chip.active,.chip:hover{background:var(--gold);color:#111827}
 .movies{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px}
 .movie{min-width:0;background:var(--panel);border:1px solid #ffffff0d;border-radius:12px;overflow:hidden;transition:.2s}
-.movie:hover{transform:translateY(-5px);border-color:#e8bd6480}
+.movie:hover{transform:translateY(-4px);border-color:#e8bd6480}
 .poster{height:220px;background:#172239;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .poster img{width:100%;height:100%;object-fit:cover}
 .movie-info{padding:12px}
-.movie h3{font-size:15px;margin:0 0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.movie h3{font-size:15px;margin:0 0 8px}
 .meta{font-size:12px;color:var(--muted);margin-bottom:12px}
 .movie button{width:100%;padding:9px;background:#202c43;color:var(--gold);border:1px solid #35425b;border-radius:6px;cursor:pointer}
 .movie button:hover{background:var(--gold);color:#111}
@@ -56,7 +58,7 @@ footer strong{color:var(--gold)}
     <a href="#genres">Genres</a>
     <a href="#watchlist">My Watchlist</a>
   </nav>
-  <input class="search" id="search" placeholder="Search movies..." aria-label="Search movies">
+  <input class="search" id="search" type="search" placeholder="Search Action, Spy, Thriller..." aria-label="Search movies">
 </header>
 
 <main>
@@ -76,20 +78,20 @@ footer strong{color:var(--gold)}
       <small>Find your next favourite</small>
     </div>
     <div class="chips" id="chips">
-      <button class="chip active" data-genre="All">All</button>
-      <button class="chip" data-genre="Action">Action</button>
-      <button class="chip" data-genre="Spy">Spy & Mission</button>
-      <button class="chip" data-genre="Thriller">Thriller</button>
-      <button class="chip" data-genre="Adventure">Adventure</button>
-      <button class="chip" data-genre="Comedy">Comedy</button>
-      <button class="chip" data-genre="Animation">Animation</button>
+      <button type="button" class="chip active" data-genre="All">All</button>
+      <button type="button" class="chip" data-genre="Action">Action</button>
+      <button type="button" class="chip" data-genre="Spy">Spy & Mission</button>
+      <button type="button" class="chip" data-genre="Thriller">Thriller</button>
+      <button type="button" class="chip" data-genre="Adventure">Adventure</button>
+      <button type="button" class="chip" data-genre="Comedy">Comedy</button>
+      <button type="button" class="chip" data-genre="Animation">Animation</button>
     </div>
   </section>
 
   <section id="movies">
     <div class="section-head">
       <h2>Discover Movies</h2>
-      <small id="count">Featured collection</small>
+      <small id="count">10 titles</small>
     </div>
     <div class="movies" id="movieGrid"></div>
     <p class="empty" id="empty" hidden>No matching titles. Try another search.</p>
@@ -128,47 +130,86 @@ const titles = [
 ].map((m,i)=>({...m,id:i+1}));
 
 const imageUrl = m => `https://images.unsplash.com/${m.img}?auto=format&fit=crop&w=500&q=80`;
+
 let activeGenre = "All";
-let saved = JSON.parse(localStorage.getItem("movieverse-watchlist") || "[]");
+let saved = [];
 
-function card(m, isSavedView=false){
- return `<article class="movie">
-   <div class="poster"><img src="${imageUrl(m)}" alt="${m.name}" loading="lazy"></div>
-   <div class="movie-info">
-     <h3>${m.name}</h3>
-     <div class="meta">${m.genre} · ${m.year}</div>
-     <button onclick="toggleSave(${m.id})">${saved.includes(m.id) ? "✓ Saved — Remove" : "+ Add to Watchlist"}</button>
-   </div>
- </article>`;
+try {
+  const stored = JSON.parse(localStorage.getItem("movieverse-watchlist") || "[]");
+  if (Array.isArray(stored)) saved = stored;
+} catch (error) {
+  saved = [];
 }
-function render(){
- const q = document.getElementById("search").value.toLowerCase().trim();
- const filtered = titles.filter(m => {
-   const genreMatch = activeGenre === "All" || m.genre.toLowerCase() === activeGenre.toLowerCase();
-   const searchMatch = m.name.toLowerCase().includes(q) || m.genre.toLowerCase().includes(q);
-   return genreMatch && searchMatch;
- });
 
- document.getElementById("movieGrid").innerHTML = filtered.map(m => card(m)).join("");
- document.getElementById("count").textContent = filtered.length + " titles";
- document.getElementById("empty").hidden = filtered.length > 0;
-
- const list = titles.filter(m => saved.includes(m.id));
- document.getElementById("savedGrid").innerHTML = list.map(m => card(m, true)).join("");
- document.getElementById("savedEmpty").hidden = list.length > 0;
-}function toggleSave(id){
- saved=saved.includes(id)?saved.filter(x=>x!==id):[...saved,id];
- localStorage.setItem("movieverse-watchlist",JSON.stringify(saved));
- render();
+function card(m) {
+  const isSaved = saved.includes(m.id);
+  return `
+    <article class="movie">
+      <div class="poster">
+        <img src="${imageUrl(m)}" alt="${m.name}" loading="lazy">
+      </div>
+      <div class="movie-info">
+        <h3>${m.name}</h3>
+        <div class="meta">${m.genre} · ${m.year}</div>
+        <button type="button" data-save="${m.id}">
+          ${isSaved ? "✓ Saved — Remove" : "+ Add to Watchlist"}
+        </button>
+      </div>
+    </article>`;
 }
-document.getElementById("search").addEventListener("input",render);
-document.getElementById("chips").addEventListener("click",e=>{
- const btn=e.target.closest("button[data-genre]");
- if(!btn)return;
- activeGenre=btn.dataset.genre;
- document.querySelectorAll(".chip").forEach(c=>c.classList.toggle("active",c===btn));
- render();
+
+function render() {
+  const searchBox = document.getElementById("search");
+  const query = searchBox.value.toLowerCase().trim();
+
+  const filtered = titles.filter(movie => {
+    const searchableText = (movie.name + " " + movie.genre + " " + movie.year).toLowerCase();
+    const matchesSearch = searchableText.includes(query);
+    const matchesGenre = activeGenre === "All" || movie.genre.toLowerCase() === activeGenre.toLowerCase();
+    return matchesSearch && matchesGenre;
+  });
+
+  document.getElementById("movieGrid").innerHTML = filtered.map(card).join("");
+  document.getElementById("count").textContent = filtered.length + " titles";
+  document.getElementById("empty").hidden = filtered.length !== 0;
+
+  const savedMovies = titles.filter(movie => saved.includes(movie.id));
+  document.getElementById("savedGrid").innerHTML = savedMovies.map(card).join("");
+  document.getElementById("savedEmpty").hidden = savedMovies.length !== 0;
+}
+
+function toggleSave(id) {
+  saved = saved.includes(id)
+    ? saved.filter(item => item !== id)
+    : [...saved, id];
+
+  try {
+    localStorage.setItem("movieverse-watchlist", JSON.stringify(saved));
+  } catch (error) {
+    // Watchlist still works for this page session if storage is unavailable.
+  }
+  render();
+}
+
+document.getElementById("search").addEventListener("input", render);
+
+document.getElementById("chips").addEventListener("click", function(event) {
+  const button = event.target.closest("button[data-genre]");
+  if (!button) return;
+
+  activeGenre = button.dataset.genre;
+  document.querySelectorAll(".chip").forEach(chip => {
+    chip.classList.toggle("active", chip === button);
+  });
+  render();
 });
+
+document.addEventListener("click", function(event) {
+  const button = event.target.closest("button[data-save]");
+  if (!button) return;
+  toggleSave(Number(button.dataset.save));
+});
+
 render();
 </script>
 </body>
