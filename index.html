@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MovieVerse | Your World of Entertainment</title>
+<style>
+:root{--bg:#080d1a;--panel:#111a2e;--gold:#e8bd64;--text:#f5f5f7;--muted:#aab3c5}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+header{position:sticky;top:0;z-index:10;background:#080d1af2;border-bottom:1px solid #ffffff12;padding:16px 5%;display:flex;align-items:center;gap:24px;justify-content:space-between;flex-wrap:wrap}
+.logo{font-size:25px;font-weight:900;color:var(--gold);letter-spacing:-1px}
+.logo span{color:white}
+nav{display:flex;gap:18px;flex-wrap:wrap}
+nav a{color:#d8deea;text-decoration:none;font-size:14px}
+nav a:hover{color:var(--gold)}
+.search{background:#141e32;border:1px solid #2b3852;border-radius:25px;padding:11px 15px;color:white;width:220px;max-width:100%}
+.hero{margin:24px 5% 35px;min-height:360px;border-radius:20px;overflow:hidden;display:flex;align-items:center;background:linear-gradient(90deg,#080d1a 0%,#080d1acc 48%,#080d1a22 100%),url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1600&q=85') center/cover}
+.hero-content{padding:40px;max-width:600px}
+.eyebrow{color:var(--gold);font-weight:bold;letter-spacing:3px;font-size:12px}
+h1{font-size:clamp(36px,6vw,64px);line-height:1.04;margin:15px 0}
+.hero p{color:#d0d6e2;line-height:1.7;max-width:470px}
+.btn{display:inline-block;padding:13px 20px;border-radius:8px;background:var(--gold);color:#101522;font-weight:bold;text-decoration:none;border:0;cursor:pointer}
+.btn.secondary{background:#ffffff16;color:white;border:1px solid #ffffff35;margin-left:8px}
+section{padding:0 5%;margin:35px 0}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+h2{font-size:23px;margin:0}
+.section-head small{color:var(--gold)}
+.chips{display:flex;gap:10px;flex-wrap:wrap}
+.chip{background:var(--panel);color:#dce2ee;border:1px solid #29354b;padding:10px 16px;border-radius:22px;cursor:pointer}
+.chip.active,.chip:hover{background:var(--gold);color:#111827}
+.movies{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px}
+.movie{min-width:0;background:var(--panel);border:1px solid #ffffff0d;border-radius:12px;overflow:hidden;transition:.2s}
+.movie:hover{transform:translateY(-5px);border-color:#e8bd6480}
+.poster{height:220px;background:#172239;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.poster img{width:100%;height:100%;object-fit:cover}
+.movie-info{padding:12px}
+.movie h3{font-size:15px;margin:0 0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta{font-size:12px;color:var(--muted);margin-bottom:12px}
+.movie button{width:100%;padding:9px;background:#202c43;color:var(--gold);border:1px solid #35425b;border-radius:6px;cursor:pointer}
+.movie button:hover{background:var(--gold);color:#111}
+.empty{color:var(--muted);padding:25px 0}
+footer{border-top:1px solid #ffffff15;margin-top:55px;padding:30px 5%;color:var(--muted);font-size:13px;line-height:1.8}
+footer strong{color:var(--gold)}
+@media(max-width:900px){.movies{grid-template-columns:repeat(3,minmax(0,1fr))}.poster{height:210px}}
+@media(max-width:560px){header{gap:14px}.logo{font-size:22px}nav{order:3;width:100%;gap:15px}.search{width:100%}.hero{margin:16px 4% 28px;min-height:330px}.hero-content{padding:25px}.movies{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.poster{height:190px}section{padding:0 4%}h2{font-size:20px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">MOVIE<span>VERSE</span></div>
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#movies">Movies</a>
+    <a href="#genres">Genres</a>
+    <a href="#watchlist">My Watchlist</a>
+  </nav>
+  <input class="search" id="search" placeholder="Search movies..." aria-label="Search movies">
+</header>
+
+<main>
+  <div class="hero" id="home">
+    <div class="hero-content">
+      <div class="eyebrow">YOUR WORLD. YOUR ENTERTAINMENT.</div>
+      <h1>Every Story.<br>One Universe.</h1>
+      <p>Discover action, spy missions, thrillers, adventures and unforgettable stories — all in one place.</p>
+      <a class="btn" href="#movies">Explore Movies</a>
+      <a class="btn secondary" href="#genres">Browse Genres</a>
+    </div>
+  </div>
+
+  <section id="genres">
+    <div class="section-head">
+      <h2>Explore Genres</h2>
+      <small>Find your next favourite</small>
+    </div>
+    <div class="chips" id="chips">
+      <button class="chip active" data-genre="All">All</button>
+      <button class="chip" data-genre="Action">Action</button>
+      <button class="chip" data-genre="Spy">Spy & Mission</button>
+      <button class="chip" data-genre="Thriller">Thriller</button>
+      <button class="chip" data-genre="Adventure">Adventure</button>
+      <button class="chip" data-genre="Comedy">Comedy</button>
+      <button class="chip" data-genre="Animation">Animation</button>
+    </div>
+  </section>
+
+  <section id="movies">
+    <div class="section-head">
+      <h2>Discover Movies</h2>
+      <small id="count">Featured collection</small>
+    </div>
+    <div class="movies" id="movieGrid"></div>
+    <p class="empty" id="empty" hidden>No matching titles. Try another search.</p>
+  </section>
+
+  <section id="watchlist">
+    <div class="section-head">
+      <h2>My Watchlist</h2>
+      <small>Save titles for later</small>
+    </div>
+    <div class="movies" id="savedGrid"></div>
+    <p class="empty" id="savedEmpty">Your watchlist is empty. Save a title to see it here.</p>
+  </section>
+</main>
+
+<footer>
+  <strong>MOVIEVERSE</strong><br>
+  Your world of entertainment.<br>
+  This is a demonstration website. Posters are illustrative; no films are hosted here.
+  Movies and videos must be provided through authorized sources.
+  <br>© 2026 MovieVerse
+</footer>
+
+<script>
+const titles = [
+ {name:"Mission & Espionage",genre:"Spy",year:"Spy Collection",img:"photo-1519608487953-e999c86e7455"},
+ {name:"Action Universe",genre:"Action",year:"Action Collection",img:"photo-1500530855697-b586d89ba3ee"},
+ {name:"Mystery Nights",genre:"Thriller",year:"Thriller Collection",img:"photo-1518709268805-4e9042af9f23"},
+ {name:"Epic Adventures",genre:"Adventure",year:"Adventure Collection",img:"photo-1464822759023-fed622ff2c3b"},
+ {name:"Comedy Central",genre:"Comedy",year:"Comedy Collection",img:"photo-1485846234645-a62644f84728"},
+ {name:"Animated Worlds",genre:"Animation",year:"Animation Collection",img:"photo-1478720568477-152d9b164e26"},
+ {name:"The Big Screen",genre:"Action",year:"Cinema Collection",img:"photo-1440404653325-ab127d49abc1"},
+ {name:"Beyond the Stars",genre:"Adventure",year:"Sci-Fi Collection",img:"photo-1446776811953-b23d57bd21aa"},
+ {name:"Dark Secrets",genre:"Thriller",year:"Mystery Collection",img:"photo-1519608487953-e999c86e7455"},
+ {name:"The Mission Files",genre:"Spy",year:"Spy Collection",img:"photo-1478720568477-152d9b164e26"}
+].map((m,i)=>({...m,id:i+1}));
+
+const imageUrl = m => `https://images.unsplash.com/${m.img}?auto=format&fit=crop&w=500&q=80`;
+let activeGenre = "All";
+let saved = JSON.parse(localStorage.getItem("movieverse-watchlist") || "[]");
+
+function card(m, isSavedView=false){
+ return `<article class="movie">
+   <div class="poster"><img src="${imageUrl(m)}" alt="${m.name}" loading="lazy"></div>
+   <div class="movie-info">
+     <h3>${m.name}</h3>
+     <div class="meta">${m.genre} · ${m.year}</div>
+     <button onclick="toggleSave(${m.id})">${saved.includes(m.id) ? "✓ Saved — Remove" : "+ Add to Watchlist"}</button>
+   </div>
+ </article>`;
+}
+function render(){
+ const q = document.getElementById("search").value.toLowerCase().trim();
+ const filtered = titles.filter(m=>(activeGenre==="All"||m.genre===activeGenre)&&m.name.toLowerCase().includes(q));
+ document.getElementById("movieGrid").innerHTML=filtered.map(m=>card(m)).join("");
+ document.getElementById("count").textContent=`${filtered.length} titles`;
+ document.getElementById("empty").hidden=filtered.length>0;
+ const list=titles.filter(m=>saved.includes(m.id));
+ document.getElementById("savedGrid").innerHTML=list.map(m=>card(m,true)).join("");
+ document.getElementById("savedEmpty").hidden=list.length>0;
+}
+function toggleSave(id){
+ saved=saved.includes(id)?saved.filter(x=>x!==id):[...saved,id];
+ localStorage.setItem("movieverse-watchlist",JSON.stringify(saved));
+ render();
+}
+document.getElementById("search").addEventListener("input",render);
+document.getElementById("chips").addEventListener("click",e=>{
+ const btn=e.target.closest("button[data-genre]");
+ if(!btn)return;
+ activeGenre=btn.dataset.genre;
+ document.querySelectorAll(".chip").forEach(c=>c.classList.toggle("active",c===btn));
+ render();
+});
+render();
+</script>
+</body>
+</html>
