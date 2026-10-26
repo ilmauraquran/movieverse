@@ -143,15 +143,20 @@ function card(m, isSavedView=false){
 }
 function render(){
  const q = document.getElementById("search").value.toLowerCase().trim();
- const filtered = titles.filter(m=>(activeGenre==="All"||m.genre===activeGenre)&&m.name.toLowerCase().includes(q));
- document.getElementById("movieGrid").innerHTML=filtered.map(m=>card(m)).join("");
- document.getElementById("count").textContent=`${filtered.length} titles`;
- document.getElementById("empty").hidden=filtered.length>0;
- const list=titles.filter(m=>saved.includes(m.id));
- document.getElementById("savedGrid").innerHTML=list.map(m=>card(m,true)).join("");
- document.getElementById("savedEmpty").hidden=list.length>0;
-}
-function toggleSave(id){
+ const filtered = titles.filter(m => {
+   const genreMatch = activeGenre === "All" || m.genre.toLowerCase() === activeGenre.toLowerCase();
+   const searchMatch = m.name.toLowerCase().includes(q) || m.genre.toLowerCase().includes(q);
+   return genreMatch && searchMatch;
+ });
+
+ document.getElementById("movieGrid").innerHTML = filtered.map(m => card(m)).join("");
+ document.getElementById("count").textContent = filtered.length + " titles";
+ document.getElementById("empty").hidden = filtered.length > 0;
+
+ const list = titles.filter(m => saved.includes(m.id));
+ document.getElementById("savedGrid").innerHTML = list.map(m => card(m, true)).join("");
+ document.getElementById("savedEmpty").hidden = list.length > 0;
+}function toggleSave(id){
  saved=saved.includes(id)?saved.filter(x=>x!==id):[...saved,id];
  localStorage.setItem("movieverse-watchlist",JSON.stringify(saved));
  render();
